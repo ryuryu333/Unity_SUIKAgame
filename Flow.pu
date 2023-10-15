@@ -1,0 +1,16 @@
+@startuml
+start
+:TitleSceneを読み込み;
+:Press Any Kye to Start;
+:GameSceneを読み込み;
+:ステージを作成;
+:玉のプレハブを読み込み;
+:玉の生成順乱数作成、スコア等の初期化等;
+:UIの作成;
+:プレイヤーの操作受付開始;
+:ゲームオーバー;
+:リザルトを表示;
+:終了処理（リザルトの保管等）;
+:TitleSceneを読み込み;
+end
+@enduml
