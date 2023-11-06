@@ -6,6 +6,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.UIElements;
+using UnityEngine.AddressableAssets;
 
 public class FallingObjectController : SingletonMonoBehaviour<FallingObjectController>
 {
@@ -16,6 +17,11 @@ public class FallingObjectController : SingletonMonoBehaviour<FallingObjectContr
     private List<StatusFallingObject> statusFallingObjectList = new();
     [SerializeField] private float generationIntervalValue;
     [SerializeField] private float generationIntervalTimer;
+    [SerializeField] private List<float> objcetScaleByTypeList = new List<float>();
+    private int numberOfObjectType;
+
+    [SerializeField] private List<AssetReference> SpriteRefList = new();
+    [SerializeField] private List<Sprite> SpriteList = new();
 
     public float GenerationIntervalValue
     { get { return generationIntervalValue; } set { generationIntervalValue = value; } }
@@ -48,9 +54,14 @@ public class FallingObjectController : SingletonMonoBehaviour<FallingObjectContr
         }
     }
 
-    [SerializeField] private List<float> objcetScaleByTypeList = new List<float>();
-    private int numberOfObjectType;
-    //[SerializeField] private List<Sprite> objcetSpriteList = new List<Sprite>(); Œã‚ÅŽÀ‘•
+
+
+    private void Initialize()
+    {
+        numberOfObjectType = objcetScaleByTypeList.Count;
+        fallingObjectParentTransform = fallingObjectParent.transform;
+        generationIntervalTimer = generationIntervalValue;
+    }
 
 
     private void FallingObjectGenerate()
