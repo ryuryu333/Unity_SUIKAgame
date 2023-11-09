@@ -1,0 +1,55 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
+  m_Name: FallingObjectSpriteGroup
+  m_EditorClassIdentifier: 
+  m_GroupName: FallingObjectSpriteGroup
+  m_Data:
+    m_SerializedData: []
+  m_GUID: 98998e465165e194fabbda6f0fce053e
+  m_SerializeEntries:
+  - m_GUID: 0efa9c74ae8e3d1479b6b3d6d4720961
+    m_Address: "Assets/Materials/FallingObjectSprite/\u30A2\u30E9\u30B4\u30F3.png"
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 3e9c5718202818c45a5b1e5db53e572f
+    m_Address: "Assets/Materials/FallingObjectSprite/\u30A2\u30FC\u30EB\u30AC\u30A6.png"
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 15442783e9d29c44a93dbd23d26417f2
+    m_Address: "Assets/Materials/FallingObjectSprite/\u30AA\u30FC\u30B9\u30C8\u30EA\u30A2.png"
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 7497b798a2061b6448570a1dac3bb317
+    m_Address: "Assets/Materials/FallingObjectSprite/\u30AB\u30B9\u30C6\u30A3\u30FC\u30EA\u30E3.png"
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: e8b1a9a737fced441acb533db4110dcf
+    m_Address: "Assets/Materials/FallingObjectSprite/\u30AB\u30FC\u30EB2\u4E16.png"
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: a7513ec2ba5060c41aa2cebb87e262d3
+    m_Address: "Assets/Materials/FallingObjectSprite/\u30B9\u30DA\u30A4\u30F3.png"
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  m_ReadOnly: 0
+  m_Settings: {fileID: 11400000, guid: b5a59d5e53f4a0943b72cf00ed8bccaf, type: 2}
+  m_SchemaSet:
+    m_Schemas:
+    - {fileID: 11400000, guid: 216a10869c313ca419428c97eb47be93, type: 2}
+    - {fileID: 11400000, guid: 05362d21dff80304a8dd462c5291721b, type: 2}
