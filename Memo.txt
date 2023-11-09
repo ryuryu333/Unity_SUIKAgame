@@ -15,3 +15,6 @@ git reset -- hard origin/master
 git log --graph --all --decorate
 
 スプライトのデータ管理の為にAddressablesパッケージをProjectにインストール
+画像素材作成
+スプライトをオブジェクトに反映させるコード作成
+次はUI
