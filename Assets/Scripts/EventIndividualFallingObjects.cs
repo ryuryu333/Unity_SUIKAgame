@@ -1,15 +1,18 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class EventIndividualFallingObjects : MonoBehaviour
 {
-    private string tagOfFallingObject;
     private StatusFallingObject statusFallingObject;
+    private string tagOfFallingObject;
+    private string tagOfGameoverLine;
 
     private void Start()
     {
-        tagOfFallingObject = gameObject.tag;
+        tagOfFallingObject = MainSceneController.Instance.TagOfFallingObject;
+        tagOfGameoverLine = MainSceneController.Instance.TagOfGameoverLine;
         statusFallingObject = gameObject.GetComponent<StatusFallingObject>();
     }
 
@@ -19,6 +22,10 @@ public class EventIndividualFallingObjects : MonoBehaviour
         {
             StatusFallingObject collidedObjectStatus = collision.gameObject.GetComponent<StatusFallingObject>();
             FallingObjectController.Instance.EventCollideFalilingObjects(statusFallingObject, collidedObjectStatus);
+        }
+        else if (collision.gameObject.CompareTag(tagOfGameoverLine))
+        {
+            //FallingObjectController.Instance.EventCollideGameoverLine(statusFallingObject);
         }
     }
 }

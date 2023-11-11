@@ -1,4 +1,4 @@
-using System.Collections;
+using Cysharp.Threading.Tasks;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
@@ -26,8 +26,7 @@ public class FallingObjectController : SingletonMonoBehaviour<FallingObjectContr
     private int numberOfObjectType;
 
     [SerializeField] private float generationIntervalTimer;
-    public float GenerationIntervalValue
-    { get => generationIntervalTime; set => generationIntervalTime = value; }
+    public float GenerationIntervalValue { get => generationIntervalTime; set => generationIntervalTime = value; }
 
     async void Start()
     {
@@ -91,11 +90,20 @@ public class FallingObjectController : SingletonMonoBehaviour<FallingObjectContr
         StatusFallingObject statusInstantiateObject = instantiateObject.GetComponent<StatusFallingObject>();
         statusFallingObjectList.Add(instantiateObject.GetComponent<StatusFallingObject>());
         fallingObjectSpriteRendererList.Add(instantiateObject.GetComponent<SpriteRenderer>());
-        //何個目に作成されたオブジェクトか書き込み、List[NumberFallingObject]番目で保管したリストへアクセス
+        //StatusFallingObjectに書き込み
         statusInstantiateObject.NumberFallingObject = statusFallingObjectList.Count - 1;
+        statusInstantiateObject.IsignoreGameoverJudgment = true;
+        //生成後から一定時間後にfalseに書き換えたいので、awaitしないで処理を走らせておく
+        _ = ChangeFlagAfterIgnoreGameoverJudgmentTimeAsync(statusInstantiateObject);
         //タイプを乱数で決定、結果を反映
         int fallingObjectType = Random.Range(0, numberOfObjectType - 3);
         ChangeFallingObjectType(statusInstantiateObject, fallingObjectType);
+    }
+
+    private async UniTask ChangeFlagAfterIgnoreGameoverJudgmentTimeAsync(StatusFallingObject statusInstantiateObject)
+    {
+        await UniTask.Delay((int)ignoreGameoverJudgmentTime);
+        statusInstantiateObject.IsignoreGameoverJudgment = false;
     }
 
     private void ChangeFallingObjectType(StatusFallingObject changedFallingObjectStatus, int newTypeValue)
@@ -149,4 +157,5 @@ public class FallingObjectController : SingletonMonoBehaviour<FallingObjectContr
         beNonActivedObjectStatus.gameObject.SetActive(false);
     }
 
+     
 }
