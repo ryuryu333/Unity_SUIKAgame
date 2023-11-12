@@ -60,7 +60,6 @@ public class FallingObjectController : SingletonMonoBehaviour<FallingObjectContr
 
     public void UpdateMe()
     {
-        if (!endInitialization) return;
         CheckPlayerInput();
     }
 

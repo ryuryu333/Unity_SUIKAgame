@@ -14,11 +14,9 @@ GameObject:
   - component: {fileID: 2271609635441996777}
   - component: {fileID: 5762740362795139938}
   - component: {fileID: 7144366795788780681}
-
   m_Layer: 7
-
   m_Name: FallingObject
-  m_TagString: FallingObject
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -58,7 +56,6 @@ MonoBehaviour:
   typeFallingObject: 0
   ignoreGameoverJudgmentRemainingTime: 0
   isignoreGameoverJudgment: 0
-
 --- !u!114 &3402568794929441938
 MonoBehaviour:
   m_ObjectHideFlags: 0
