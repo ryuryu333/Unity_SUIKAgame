@@ -29,5 +29,5 @@ title
 
 detail
 
-
+次はGameover処理自体
 
