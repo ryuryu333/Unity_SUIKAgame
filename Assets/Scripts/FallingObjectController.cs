@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 using UnityEngine.ResourceManagement.AsyncOperations;
+using static MainSceneController;
+using static UnityEngine.GraphicsBuffer;
 
 public class FallingObjectController : SingletonMonoBehaviour<FallingObjectController>
 {
@@ -18,32 +20,28 @@ public class FallingObjectController : SingletonMonoBehaviour<FallingObjectContr
     [Header("デバック用")]
     [SerializeField] private List<Sprite> spriteList = new();
     private List<Vector3> spriteScaleList = new();
-    private bool endInitialization = false;
     private Transform fallingObjectParentTransform;
     private List<GameObject> fallingObjectList = new();
     private List<StatusFallingObject> statusFallingObjectList = new();
     private List<SpriteRenderer> fallingObjectSpriteRendererList = new();
     private int numberOfObjectType;
+    private string tagOfFallingObject;
+    private string tagOfFallingObjectIgnoreGameover;
+    private MainSceneController mainSceneController;
 
     [SerializeField] private float generationIntervalTimer;
     public float GenerationIntervalValue { get => generationIntervalTime; set => generationIntervalTime = value; }
 
-    async void Start()
+    public async UniTask Initialization()
     {
         string errorMassage = "インスペクター未記入";
         if (fallingObjectPrefab == null || fallingObjectParent == null || objcetScaleByTypeList.Count == 0 || spriteRefList.Count == 0 || generationIntervalTime == 0) Debug.LogError(errorMassage);
         //設定したスプライトを順に読み込み
         for (int i = 0; i < spriteRefList.Count; i++)
         {
-            //FallingObject用のスプライトを非同期でロード
-            AsyncOperationHandle<Sprite> handle = Addressables.LoadAssetAsync<Sprite>(spriteRefList[i]);
-            //ロード完了時に呼び出されるイベントを指定
-            handle.Completed += handle =>
-            {
-                if (handle.Status == AsyncOperationStatus.Failed) Debug.LogError("AssetReference failed to load.FallingObjcetSprite");
-                spriteList.Add(handle.Result);
-            };
-            await handle.Task;
+            //FallingObject用のスプライトをロード
+            var loadSprite = await Addressables.LoadAssetAsync<Sprite>(spriteRefList[i]);
+            spriteList.Add(loadSprite);
             //スプライトの大きさを取得し、FallingObjectにスプライトをアタッチした際に指定した大きさにできる拡大倍率を計算
             float scaleX = objcetScaleByTypeList[i] / spriteList[i].bounds.size.x;
             float scaleY = objcetScaleByTypeList[i] / spriteList[i].bounds.size.y;
@@ -53,14 +51,15 @@ public class FallingObjectController : SingletonMonoBehaviour<FallingObjectContr
         numberOfObjectType = objcetScaleByTypeList.Count;
         fallingObjectParentTransform = fallingObjectParent.transform;
         generationIntervalTimer = generationIntervalTime;
+        mainSceneController = MainSceneController.Instance;
+        tagOfFallingObjectIgnoreGameover = mainSceneController.TagOfFallingObjectIgnoreGameover;
+        tagOfFallingObject = mainSceneController.TagOfFallingObject;
         //Tmpオブジェクトを削除
-        Destroy(GameObject.Find("Tmp"));        
-        endInitialization = true;
+        Destroy(GameObject.Find("Tmp"));
     }
 
-    void Update()
+    public void UpdateMe()
     {
-        if (!endInitialization) return;
         CheckPlayerInput();
     }
 
@@ -93,17 +92,18 @@ public class FallingObjectController : SingletonMonoBehaviour<FallingObjectContr
         //StatusFallingObjectに書き込み
         statusInstantiateObject.NumberFallingObject = statusFallingObjectList.Count - 1;
         statusInstantiateObject.IsignoreGameoverJudgment = true;
-        //生成後から一定時間後にfalseに書き換えたいので、awaitしないで処理を走らせておく
-        _ = ChangeFlagAfterIgnoreGameoverJudgmentTimeAsync(statusInstantiateObject);
+        //生成後から一定時間はGameover判定を無視、awaitしないで処理を走らせておく
+        _ = TemporarilyIgnoreGameover(instantiateObject);
         //タイプを乱数で決定、結果を反映
         int fallingObjectType = Random.Range(0, numberOfObjectType - 3);
         ChangeFallingObjectType(statusInstantiateObject, fallingObjectType);
     }
 
-    private async UniTask ChangeFlagAfterIgnoreGameoverJudgmentTimeAsync(StatusFallingObject statusInstantiateObject)
+    private async UniTask TemporarilyIgnoreGameover(GameObject beChangedObject)
     {
+        beChangedObject.tag = tagOfFallingObjectIgnoreGameover;
         await UniTask.Delay((int)ignoreGameoverJudgmentTime);
-        statusInstantiateObject.IsignoreGameoverJudgment = false;
+        beChangedObject.tag = tagOfFallingObject;
     }
 
     private void ChangeFallingObjectType(StatusFallingObject changedFallingObjectStatus, int newTypeValue)
@@ -157,5 +157,12 @@ public class FallingObjectController : SingletonMonoBehaviour<FallingObjectContr
         beNonActivedObjectStatus.gameObject.SetActive(false);
     }
 
-     
+     public void EventCollideGameoverLine(StatusFallingObject collideObjectStatus)
+    {
+        if (collideObjectStatus.gameObject.CompareTag(tagOfFallingObjectIgnoreGameover)) return;
+        mainSceneController.NowMainSceneSituation = MainSceneSituation.Gameover;
+        Debug.Log(collideObjectStatus.name + "Gameover");
+    }
+
+
 }
