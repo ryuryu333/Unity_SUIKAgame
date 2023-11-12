@@ -1,24 +1,39 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using static MainSceneController;
 
 public class EventIndividualFallingObjects : MonoBehaviour
 {
-    private string tagOfFallingObject;
     private StatusFallingObject statusFallingObject;
+    private string tagOfFallingObject;
+    private string tagOfGameoverLine;
+    private MainSceneController mainSceneController;
 
     private void Start()
     {
-        tagOfFallingObject = gameObject.tag;
+        mainSceneController = MainSceneController.Instance;
+        tagOfFallingObject = mainSceneController.TagOfFallingObject;
+        tagOfGameoverLine = mainSceneController.TagOfGameoverLine;
         statusFallingObject = gameObject.GetComponent<StatusFallingObject>();
     }
 
-    void OnCollisionEnter2D(Collision2D collision)
+    private void OnCollisionEnter2D(Collision2D collision)
     {
+        if (mainSceneController.NowMainSceneSituation != MainSceneSituation.Playing) return;
         if (collision.gameObject.CompareTag(tagOfFallingObject))
         {
             StatusFallingObject collidedObjectStatus = collision.gameObject.GetComponent<StatusFallingObject>();
             FallingObjectController.Instance.EventCollideFalilingObjects(statusFallingObject, collidedObjectStatus);
+        }
+    }
+    private void OnTriggerStay2D(Collider2D collision)
+    {
+        if (mainSceneController.NowMainSceneSituation != MainSceneSituation.Playing) return;
+        if (collision.gameObject.CompareTag(tagOfGameoverLine))
+        {
+            FallingObjectController.Instance.EventCollideGameoverLine(statusFallingObject);
         }
     }
 }

@@ -1,20 +1,33 @@
 cd ~/Documents/UnityData/スイカゲーム
-
-git commit -m "First Commit"
-
-git push origin main
-
-git checkout -b feature/FallingObjectUpdate
-
 git branch -a
+
+git log --graph --pretty=format:"%C(red)%h %C(green)%an %Creset%s %C(yellow)%d%Creset"
+
+2つ前のコミットメッセージを変更
+https://www.granfairs.com/blog/staff/git-commit-fix
+
 
 リモートの内容に強制的に合わせる
 git fetch
 git reset -- hard origin/master
 
-git log --graph --all --decorate
 
-スプライトのデータ管理の為にAddressablesパッケージをProjectにインストール
-画像素材作成
-スプライトをオブジェクトに反映させるコード作成
-次はUI
+ブランチを切って開発する流れ
+git checkout -b feature/Gameover
+git add .
+git commit
+git push origin feature/FallingObjectUpdate
+git checkout main
+githubでプルリク＞マージ
+git pull origin main
+git branch -d feature/FallingObjectUpdate
+
+https://solodev.io/git-flow/
+
+コメント
+title
+
+detail
+
+次はGameover処理自体
+

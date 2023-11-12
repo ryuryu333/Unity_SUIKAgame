@@ -1,12 +1,14 @@
-using System.Collections;
+using Cysharp.Threading.Tasks;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 using UnityEngine.ResourceManagement.AsyncOperations;
+using static MainSceneController;
+using static UnityEngine.GraphicsBuffer;
 
 public class FallingObjectController : SingletonMonoBehaviour<FallingObjectController>
 {
-    [Header("ƒCƒ“ƒXƒyƒNƒ^‚Å’l‚ğw’è")]
+    [Header("ã‚¤ãƒ³ã‚¹ãƒšã‚¯ã‚¿ã§å€¤ã‚’æŒ‡å®š")]
     [SerializeField] private GameObject fallingObjectPrefab;
     [SerializeField] private GameObject fallingObjectParent;
     [SerializeField] private List<float> objcetScaleByTypeList = new();
@@ -14,52 +16,49 @@ public class FallingObjectController : SingletonMonoBehaviour<FallingObjectContr
     [SerializeField] private float generationIntervalTime;
     [SerializeField] private float ignoreGameoverJudgmentTime;
 
-    //’l‚ÌƒLƒƒƒbƒVƒ…—p•Ï”
-    [Header("ƒfƒoƒbƒN—p")]
+    //å€¤ã®ã‚­ãƒ£ãƒƒã‚·ãƒ¥ç”¨å¤‰æ•°
+    [Header("ãƒ‡ãƒãƒƒã‚¯ç”¨")]
     [SerializeField] private List<Sprite> spriteList = new();
     private List<Vector3> spriteScaleList = new();
-    private bool endInitialization = false;
     private Transform fallingObjectParentTransform;
     private List<GameObject> fallingObjectList = new();
     private List<StatusFallingObject> statusFallingObjectList = new();
     private List<SpriteRenderer> fallingObjectSpriteRendererList = new();
     private int numberOfObjectType;
+    private string tagOfFallingObject;
+    private string tagOfFallingObjectIgnoreGameover;
+    private MainSceneController mainSceneController;
 
     [SerializeField] private float generationIntervalTimer;
-    public float GenerationIntervalValue
-    { get => generationIntervalTime; set => generationIntervalTime = value; }
+    public float GenerationIntervalValue { get => generationIntervalTime; set => generationIntervalTime = value; }
 
-    async void Start()
+    public async UniTask Initialization()
     {
-        string errorMassage = "ƒCƒ“ƒXƒyƒNƒ^[–¢‹L“ü";
+        string errorMassage = "ã‚¤ãƒ³ã‚¹ãƒšã‚¯ã‚¿ãƒ¼æœªè¨˜å…¥";
         if (fallingObjectPrefab == null || fallingObjectParent == null || objcetScaleByTypeList.Count == 0 || spriteRefList.Count == 0 || generationIntervalTime == 0) Debug.LogError(errorMassage);
-        //İ’è‚µ‚½ƒXƒvƒ‰ƒCƒg‚ğ‡‚É“Ç‚İ‚İ
+        //è¨­å®šã—ãŸã‚¹ãƒ—ãƒ©ã‚¤ãƒˆã‚’é †ã«èª­ã¿è¾¼ã¿
         for (int i = 0; i < spriteRefList.Count; i++)
         {
-            //FallingObject—p‚ÌƒXƒvƒ‰ƒCƒg‚ğ”ñ“¯Šú‚Åƒ[ƒh
-            AsyncOperationHandle<Sprite> handle = Addressables.LoadAssetAsync<Sprite>(spriteRefList[i]);
-            //ƒ[ƒhŠ®—¹‚ÉŒÄ‚Ño‚³‚ê‚éƒCƒxƒ“ƒg‚ğw’è
-            handle.Completed += handle =>
-            {
-                if (handle.Status == AsyncOperationStatus.Failed) Debug.LogError("AssetReference failed to load.FallingObjcetSprite");
-                spriteList.Add(handle.Result);
-            };
-            await handle.Task;
-            //ƒXƒvƒ‰ƒCƒg‚Ì‘å‚«‚³‚ğæ“¾‚µAFallingObject‚ÉƒXƒvƒ‰ƒCƒg‚ğƒAƒ^ƒbƒ`‚µ‚½Û‚Éw’è‚µ‚½‘å‚«‚³‚É‚Å‚«‚éŠg‘å”{—¦‚ğŒvZ
+            //FallingObjectç”¨ã®ã‚¹ãƒ—ãƒ©ã‚¤ãƒˆã‚’ãƒ­ãƒ¼ãƒ‰
+            var loadSprite = await Addressables.LoadAssetAsync<Sprite>(spriteRefList[i]);
+            spriteList.Add(loadSprite);
+            //ã‚¹ãƒ—ãƒ©ã‚¤ãƒˆã®å¤§ãã•ã‚’å–å¾—ã—ã€FallingObjectã«ã‚¹ãƒ—ãƒ©ã‚¤ãƒˆã‚’ã‚¢ã‚¿ãƒƒãƒã—ãŸéš›ã«æŒ‡å®šã—ãŸå¤§ãã•ã«ã§ãã‚‹æ‹¡å¤§å€ç‡ã‚’è¨ˆç®—
             float scaleX = objcetScaleByTypeList[i] / spriteList[i].bounds.size.x;
             float scaleY = objcetScaleByTypeList[i] / spriteList[i].bounds.size.y;
             spriteScaleList.Add(new Vector3(scaleX, scaleY, 1.0f));
         }
-        //ƒƒ“ƒo•Ï”‚Ì‰Šú‰»
+        //ãƒ¡ãƒ³ãƒå¤‰æ•°ã®åˆæœŸåŒ–
         numberOfObjectType = objcetScaleByTypeList.Count;
         fallingObjectParentTransform = fallingObjectParent.transform;
         generationIntervalTimer = generationIntervalTime;
-        //TmpƒIƒuƒWƒFƒNƒg‚ğíœ
-        Destroy(GameObject.Find("Tmp"));        
-        endInitialization = true;
+        mainSceneController = MainSceneController.Instance;
+        tagOfFallingObjectIgnoreGameover = mainSceneController.TagOfFallingObjectIgnoreGameover;
+        tagOfFallingObject = mainSceneController.TagOfFallingObject;
+        //Tmpã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‚’å‰Šé™¤
+        Destroy(GameObject.Find("Tmp"));
     }
 
-    void Update()
+    public void UpdateMe()
     {
         if (!endInitialization) return;
         CheckPlayerInput();
@@ -82,41 +81,51 @@ public class FallingObjectController : SingletonMonoBehaviour<FallingObjectContr
 
     private void FallingObjectGenerate()
     {
-        //ƒvƒŒƒnƒu‚æ‚èƒIƒuƒWƒFƒNƒg‚ğ•¡»
+        //ãƒ—ãƒ¬ãƒãƒ–ã‚ˆã‚Šã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‚’è¤‡è£½
         Vector3 generatePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        generatePosition.z = 0; //zÀ•W‚Ìæ“¾’l‚ÍƒJƒƒ‰‚Æ“¯‚¶AƒJƒƒ‰‚É‰f‚é‚æ‚¤‚ÉzÀ•W‚ğ•ÏX
+        generatePosition.z = 0; //zåº§æ¨™ã®å–å¾—å€¤ã¯ã‚«ãƒ¡ãƒ©ã¨åŒã˜ã€ã‚«ãƒ¡ãƒ©ã«æ˜ ã‚‹ã‚ˆã†ã«zåº§æ¨™ã‚’å¤‰æ›´
         var instantiateObject = Instantiate(fallingObjectPrefab, generatePosition, Quaternion.Euler(0, 0, Random.Range(0, 360)), fallingObjectParentTransform);
-        //ƒŠƒXƒg‚ÖQÆ‚ğ•ÛŠÇ
+        //ãƒªã‚¹ãƒˆã¸å‚ç…§ã‚’ä¿ç®¡
         fallingObjectList.Add(instantiateObject);
         StatusFallingObject statusInstantiateObject = instantiateObject.GetComponent<StatusFallingObject>();
         statusFallingObjectList.Add(instantiateObject.GetComponent<StatusFallingObject>());
         fallingObjectSpriteRendererList.Add(instantiateObject.GetComponent<SpriteRenderer>());
-        //‰½ŒÂ–Ú‚Éì¬‚³‚ê‚½ƒIƒuƒWƒFƒNƒg‚©‘‚«‚İAList[NumberFallingObject]”Ô–Ú‚Å•ÛŠÇ‚µ‚½ƒŠƒXƒg‚ÖƒAƒNƒZƒX
+        //StatusFallingObjectã«æ›¸ãè¾¼ã¿
         statusInstantiateObject.NumberFallingObject = statusFallingObjectList.Count - 1;
-        //ƒ^ƒCƒv‚ğ—”‚ÅŒˆ’èAŒ‹‰Ê‚ğ”½‰f
+        statusInstantiateObject.IsignoreGameoverJudgment = true;
+        //ç”Ÿæˆå¾Œã‹ã‚‰ä¸€å®šæ™‚é–“ã¯Gameoveråˆ¤å®šã‚’ç„¡è¦–ã€awaitã—ãªã„ã§å‡¦ç†ã‚’èµ°ã‚‰ã›ã¦ãŠã
+        _ = TemporarilyIgnoreGameover(instantiateObject);
+        //ã‚¿ã‚¤ãƒ—ã‚’ä¹±æ•°ã§æ±ºå®šã€çµæœã‚’åæ˜ 
         int fallingObjectType = Random.Range(0, numberOfObjectType - 3);
         ChangeFallingObjectType(statusInstantiateObject, fallingObjectType);
+    }
+
+    private async UniTask TemporarilyIgnoreGameover(GameObject beChangedObject)
+    {
+        beChangedObject.tag = tagOfFallingObjectIgnoreGameover;
+        await UniTask.Delay((int)ignoreGameoverJudgmentTime);
+        beChangedObject.tag = tagOfFallingObject;
     }
 
     private void ChangeFallingObjectType(StatusFallingObject changedFallingObjectStatus, int newTypeValue)
     {
         GameObject ChangedObject = changedFallingObjectStatus.gameObject;
-        //ƒXƒe[ƒ^ƒX‚ğXV
+        //ã‚¹ãƒ†ãƒ¼ã‚¿ã‚¹ã‚’æ›´æ–°
         changedFallingObjectStatus.TypeFallingObject = newTypeValue;
-        //ƒ^ƒCƒv‚É]‚Á‚½ƒXƒvƒ‰ƒCƒgA‘å‚«‚³‚É•ÏX
+        //ã‚¿ã‚¤ãƒ—ã«å¾“ã£ãŸã‚¹ãƒ—ãƒ©ã‚¤ãƒˆã€å¤§ãã•ã«å¤‰æ›´
         fallingObjectSpriteRendererList[changedFallingObjectStatus.NumberFallingObject].sprite = spriteList[newTypeValue];
         ChangedObject.transform.localScale = spriteScaleList[newTypeValue];
-        //ƒRƒ‰ƒCƒ_[‚ğXVid‚¢ˆ—‚È‚Ì‚ÅƒIƒuƒWƒFƒNƒg‚Ì”‚ª‘½‚¢‚ÆŒµ‚µ‚¢‚©‚àj
-        //ƒRƒ“ƒ|[ƒlƒ“ƒg‚ğ•t‚¯‚È‚¨‚³‚È‚¢‚ÆƒRƒ‰ƒCƒ_[‚ªƒXƒvƒ‰ƒCƒg‚É‰ˆ‚Á‚½Œ`‚É©“®’²®‚³‚ê‚È‚¢
+        //ã‚³ãƒ©ã‚¤ãƒ€ãƒ¼ã‚’æ›´æ–°ï¼ˆé‡ã„å‡¦ç†ãªã®ã§ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã®æ•°ãŒå¤šã„ã¨å³ã—ã„ã‹ã‚‚ï¼‰
+        //ã‚³ãƒ³ãƒãƒ¼ãƒãƒ³ãƒˆã‚’ä»˜ã‘ãªãŠã•ãªã„ã¨ã‚³ãƒ©ã‚¤ãƒ€ãƒ¼ãŒã‚¹ãƒ—ãƒ©ã‚¤ãƒˆã«æ²¿ã£ãŸå½¢ã«è‡ªå‹•èª¿æ•´ã•ã‚Œãªã„
         Destroy(ChangedObject.GetComponent<PolygonCollider2D>());
         ChangedObject.AddComponent<PolygonCollider2D>();
     }
 
     public void EventCollideFalilingObjects(StatusFallingObject collideObjectStatus, StatusFallingObject beCollidedObjectStatus)
     {
-        //“¯‚¶ƒ^ƒCƒv‚ÌƒIƒuƒWƒFƒNƒg‚ªG‚ê‚½‚Ì‚İi‰»iex. type 2 + type 2 -> type 1j
+        //åŒã˜ã‚¿ã‚¤ãƒ—ã®ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆãŒè§¦ã‚ŒãŸæ™‚ã®ã¿é€²åŒ–ï¼ˆex. type 2 + type 2 -> type 1ï¼‰
         if (collideObjectStatus.TypeFallingObject != beCollidedObjectStatus.TypeFallingObject) return;
-        //i‰»‚³‚¹‚éAÁ‹‚·‚éƒIƒuƒWƒFƒNƒg‚ğŒˆ’èiã‘¤‚É‚¢‚éƒIƒuƒWƒFƒNƒg‚Ì•û‚ği‰»‚³‚¹‚éj
+        //é€²åŒ–ã•ã›ã‚‹ã€æ¶ˆå»ã™ã‚‹ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‚’æ±ºå®šï¼ˆä¸Šå´ã«ã„ã‚‹ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã®æ–¹ã‚’é€²åŒ–ã•ã›ã‚‹ï¼‰
         bool collideObjectIsChanged = false;
         Vector3 collideObjectPosition = collideObjectStatus.gameObject.transform.position;
         Vector3 beCollidedObjectPosition = beCollidedObjectStatus.gameObject.transform.position;
@@ -133,20 +142,26 @@ public class FallingObjectController : SingletonMonoBehaviour<FallingObjectContr
         }
         StatusFallingObject beChangedObjectStatus = collideObjectIsChanged ? collideObjectStatus : beCollidedObjectStatus;
         StatusFallingObject beNonActivedObjectStatus = collideObjectIsChanged ? beCollidedObjectStatus : collideObjectStatus;
-        //i‰»
+        //é€²åŒ–
         int currentTypeValue = beChangedObjectStatus.TypeFallingObject;
         int newTypeValue = currentTypeValue + 1;
         if (newTypeValue == numberOfObjectType)
         {
-            //ƒXƒRƒA‰ÁZ“™‚ğ’Ç‰Á‚·‚é—\’èA¡‚Íæ‚èŠ¸‚¦‚¸”ñƒAƒNƒeƒBƒu‰»i‰æ–Ê‚©‚çÁ‚·j
+            //ã‚¹ã‚³ã‚¢åŠ ç®—ç­‰ã‚’è¿½åŠ ã™ã‚‹äºˆå®šã€ä»Šã¯å–ã‚Šæ•¢ãˆãšéã‚¢ã‚¯ãƒ†ã‚£ãƒ–åŒ–ï¼ˆç”»é¢ã‹ã‚‰æ¶ˆã™ï¼‰
             beChangedObjectStatus.gameObject.SetActive(false);
         }
         else
         {
             ChangeFallingObjectType(beChangedObjectStatus, newTypeValue);
         }
-        //i‰»‚³‚¹‚È‚¢•û‚ÌƒIƒuƒWƒFƒNƒg‚Í”ñƒAƒNƒeƒBƒu‰»i‰æ–Ê‚©‚çÁ‚·j
+        //é€²åŒ–ã•ã›ãªã„æ–¹ã®ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã¯éã‚¢ã‚¯ãƒ†ã‚£ãƒ–åŒ–ï¼ˆç”»é¢ã‹ã‚‰æ¶ˆã™ï¼‰
         beNonActivedObjectStatus.gameObject.SetActive(false);
     }
 
+     public void EventCollideGameoverLine(StatusFallingObject collideObjectStatus)
+    {
+        if (collideObjectStatus.gameObject.CompareTag(tagOfFallingObjectIgnoreGameover)) return;
+        mainSceneController.NowMainSceneSituation = MainSceneSituation.Gameover;
+        Debug.Log(collideObjectStatus.name + "Gameover");
+    }
 }
