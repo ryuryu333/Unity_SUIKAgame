@@ -9,7 +9,7 @@ https://www.granfairs.com/blog/staff/git-commit-fix
 
 リモートの内容に強制的に合わせる
 git fetch
-git reset -- hard origin/master
+git reset -- hard origin/main
 
 
 ブランチを切って開発する流れ
