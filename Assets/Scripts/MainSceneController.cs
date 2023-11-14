@@ -16,9 +16,19 @@ public class MainSceneController : SingletonMonoBehaviour<MainSceneController>
     public string TagOfFallingObjectIgnoreGameover { get => tagOfFallingObjectIgnoreGameover; set => tagOfFallingObjectIgnoreGameover = value; }
 
     [Header("デバック用")]
+    private FallingObjectController fallingObjectController;
+    private UIController uiController;
     [SerializeField] private MainSceneSituation nowMainSceneSituation;
-    public MainSceneSituation NowMainSceneSituation { get => nowMainSceneSituation; set => nowMainSceneSituation = value; }
-    FallingObjectController fallingObjectController;
+    public MainSceneSituation NowMainSceneSituation 
+    { 
+        get => nowMainSceneSituation; 
+        set      
+        {
+            if (value == MainSceneSituation.Gameover) DisplayUIResult();
+            nowMainSceneSituation = value;
+        }         
+    }
+
 
     public enum MainSceneSituation
     {
@@ -34,7 +44,9 @@ public class MainSceneController : SingletonMonoBehaviour<MainSceneController>
         string errorMassage = "インスペクター未記入";
         if (tagOfFallingObject == "" || tagOfGameoverLine == "" || tagOfFallingObjectIgnoreGameover == "") Debug.LogError(errorMassage);
         fallingObjectController = FallingObjectController.Instance;
+        uiController = UIController.Instance;
         await fallingObjectController.Initialization();
+        uiController.Initialization();
         nowMainSceneSituation = MainSceneSituation.Playing;
     }
 
@@ -54,5 +66,10 @@ public class MainSceneController : SingletonMonoBehaviour<MainSceneController>
             default:
                 break;
         }
+    }
+
+    private void DisplayUIResult()
+    {
+        uiController.DisplayUIResult();
     }
 }
