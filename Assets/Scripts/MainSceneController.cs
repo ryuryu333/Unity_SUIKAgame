@@ -18,6 +18,17 @@ public class MainSceneController : SingletonMonoBehaviour<MainSceneController>
     [Header("デバック用")]
     private FallingObjectController fallingObjectController;
     private UIController uiController;
+    private ScoreController scoreController;
+    [SerializeField] private int score = 0;
+    public int Score
+    {
+        get => score;
+        set
+        {
+            score = value;
+            uiController.UIScoreUpdate();
+        }
+    }
     [SerializeField] private MainSceneSituation nowMainSceneSituation;
     public MainSceneSituation NowMainSceneSituation 
     { 
@@ -45,8 +56,10 @@ public class MainSceneController : SingletonMonoBehaviour<MainSceneController>
         if (tagOfFallingObject == "" || tagOfGameoverLine == "" || tagOfFallingObjectIgnoreGameover == "") Debug.LogError(errorMassage);
         fallingObjectController = FallingObjectController.Instance;
         uiController = UIController.Instance;
+        scoreController = ScoreController.Instance;
         await fallingObjectController.Initialization();
         uiController.Initialization();
+        scoreController.Initialization();
         nowMainSceneSituation = MainSceneSituation.Playing;
     }
 

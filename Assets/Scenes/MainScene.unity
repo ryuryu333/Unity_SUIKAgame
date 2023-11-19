@@ -388,6 +388,7 @@ GameObject:
   m_Component:
   - component: {fileID: 220482617}
   - component: {fileID: 220482616}
+  - component: {fileID: 220482620}
   - component: {fileID: 220482618}
   - component: {fileID: 220482619}
   m_Layer: 0
@@ -477,6 +478,7 @@ MonoBehaviour:
   tagOfFallingObject: FallingObject
   tagOfGameoverLine: GameoverLine
   tagOfFallingObjectIgnoreGameover: FallingObjectIgnoreGameover
+  score: 0
   nowMainSceneSituation: 0
 --- !u!114 &220482619
 MonoBehaviour:
@@ -492,7 +494,20 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   uiResultObject: {fileID: 762050746}
   changeToTitleScene: {fileID: 27040368}
-  uiScore: {fileID: 0}
+  uiScore: {fileID: 834994733}
+--- !u!114 &220482620
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 220482615}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 35e67c99314cebc4ca27eb7ccf5b9005, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  scoreByTypeList: 0100000003000000070000000c0000001200000019000000
 --- !u!224 &317183979 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 711689374124265520, guid: c3f5dc1508c6ef14791d4eb5bd8dafcc, type: 3}
