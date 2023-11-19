@@ -1,4 +1,4 @@
-using System.Collections;
+ï»¿using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
@@ -8,7 +8,7 @@ using static GameManager;
 
 public class UIController : SingletonMonoBehaviour<UIController>
 {
-    [Header("ƒCƒ“ƒXƒyƒNƒ^‚Å’l‚ğw’è")]
+    [Header("ã‚¤ãƒ³ã‚¹ãƒšã‚¯ã‚¿ã§å€¤ã‚’æŒ‡å®š")]
     [SerializeField] private GameObject uiResultObject;
     [SerializeField] private Button changeToTitleScene;
     [SerializeField] private GameObject uiScore;
@@ -16,7 +16,7 @@ public class UIController : SingletonMonoBehaviour<UIController>
 
     public void Initialization()
     {
-        string errorMassage = "ƒCƒ“ƒXƒyƒNƒ^[–¢‹L“ü";
+        string errorMassage = "ã‚¤ãƒ³ã‚¹ãƒšã‚¯ã‚¿ãƒ¼æœªè¨˜å…¥";
         if (uiResultObject == null || changeToTitleScene == null || uiScore == null) Debug.LogError(errorMassage);
         uiResultObject.SetActive(false);
         uiScore.SetActive(true);

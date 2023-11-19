@@ -1,11 +1,11 @@
-using System.Collections;
+ï»¿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.PlayerLoop;
 
 public class MainSceneController : SingletonMonoBehaviour<MainSceneController>
 {
-    [Header("ƒCƒ“ƒXƒyƒNƒ^‚Å’l‚ğw’è")]
+    [Header("ã‚¤ãƒ³ã‚¹ãƒšã‚¯ã‚¿ã§å€¤ã‚’æŒ‡å®š")]
     [SerializeField] private string tagOfFallingObject;
     public string TagOfFallingObject { get => tagOfFallingObject; set => tagOfFallingObject = value; }
 
@@ -15,7 +15,7 @@ public class MainSceneController : SingletonMonoBehaviour<MainSceneController>
     [SerializeField] private string tagOfFallingObjectIgnoreGameover;
     public string TagOfFallingObjectIgnoreGameover { get => tagOfFallingObjectIgnoreGameover; set => tagOfFallingObjectIgnoreGameover = value; }
 
-    [Header("ƒfƒoƒbƒN—p")]
+    [Header("ãƒ‡ãƒãƒƒã‚¯ç”¨")]
     private FallingObjectController fallingObjectController;
     private UIController uiController;
     [SerializeField] private MainSceneSituation nowMainSceneSituation;
@@ -41,7 +41,7 @@ public class MainSceneController : SingletonMonoBehaviour<MainSceneController>
     async void Start()
     {
         nowMainSceneSituation = MainSceneSituation.Initializing;
-        string errorMassage = "ƒCƒ“ƒXƒyƒNƒ^[–¢‹L“ü";
+        string errorMassage = "ã‚¤ãƒ³ã‚¹ãƒšã‚¯ã‚¿ãƒ¼æœªè¨˜å…¥";
         if (tagOfFallingObject == "" || tagOfGameoverLine == "" || tagOfFallingObjectIgnoreGameover == "") Debug.LogError(errorMassage);
         fallingObjectController = FallingObjectController.Instance;
         uiController = UIController.Instance;

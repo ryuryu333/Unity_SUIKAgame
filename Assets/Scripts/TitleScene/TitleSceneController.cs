@@ -1,4 +1,4 @@
-using System.Collections;
+ï»¿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -7,12 +7,12 @@ using static GameManager;
 
 public class TitleSceneController : MonoBehaviour
 {
-    [Header("ƒCƒ“ƒXƒyƒNƒ^‚Å’l‚ðŽw’è")]
+    [Header("ã‚¤ãƒ³ã‚¹ãƒšã‚¯ã‚¿ã§å€¤ã‚’æŒ‡å®š")]
     [SerializeField] private Button startButton;
 
     void Start()
     {
-        string errorMassage = "ƒCƒ“ƒXƒyƒNƒ^[–¢‹L“ü";
+        string errorMassage = "ã‚¤ãƒ³ã‚¹ãƒšã‚¯ã‚¿ãƒ¼æœªè¨˜å…¥";
         if (startButton == null) Debug.LogError(errorMassage);
         startButton.onClick.AddListener(() => SceneManager.LoadScene(SceneName.MainScene.ToString()));
     }
