@@ -24,7 +24,7 @@ public class MainSceneController : SingletonMonoBehaviour<MainSceneController>
         get => nowMainSceneSituation; 
         set      
         {
-            if (value == MainSceneSituation.Gameover) DisplayUIResult();
+            if (value == MainSceneSituation.Gameover) GameoverEvent();
             nowMainSceneSituation = value;
         }         
     }
@@ -68,8 +68,8 @@ public class MainSceneController : SingletonMonoBehaviour<MainSceneController>
         }
     }
 
-    private void DisplayUIResult()
+    private void GameoverEvent()
     {
-        uiController.DisplayUIResult();
+        uiController.GameoverEvent();
     }
 }
