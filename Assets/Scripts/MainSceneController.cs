@@ -1,11 +1,11 @@
-using System.Collections;
+Ôªøusing System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.PlayerLoop;
 
 public class MainSceneController : SingletonMonoBehaviour<MainSceneController>
 {
-    [Header("ÉCÉìÉXÉyÉNÉ^Ç≈ílÇéwíË")]
+    [Header("„Ç§„É≥„Çπ„Éö„ÇØ„Çø„ÅßÂÄ§„ÇíÊåáÂÆö")]
     [SerializeField] private string tagOfFallingObject;
     public string TagOfFallingObject { get => tagOfFallingObject; set => tagOfFallingObject = value; }
 
@@ -15,16 +15,27 @@ public class MainSceneController : SingletonMonoBehaviour<MainSceneController>
     [SerializeField] private string tagOfFallingObjectIgnoreGameover;
     public string TagOfFallingObjectIgnoreGameover { get => tagOfFallingObjectIgnoreGameover; set => tagOfFallingObjectIgnoreGameover = value; }
 
-    [Header("ÉfÉoÉbÉNóp")]
+    [Header("„Éá„Éê„ÉÉ„ÇØÁî®")]
     private FallingObjectController fallingObjectController;
     private UIController uiController;
+    private ScoreController scoreController;
+    [SerializeField] private int score = 0;
+    public int Score
+    {
+        get => score;
+        set
+        {
+            score = value;
+            uiController.UIScoreUpdate();
+        }
+    }
     [SerializeField] private MainSceneSituation nowMainSceneSituation;
     public MainSceneSituation NowMainSceneSituation 
     { 
         get => nowMainSceneSituation; 
         set      
         {
-            if (value == MainSceneSituation.Gameover) DisplayUIResult();
+            if (value == MainSceneSituation.Gameover) GameoverEvent();
             nowMainSceneSituation = value;
         }         
     }
@@ -41,12 +52,14 @@ public class MainSceneController : SingletonMonoBehaviour<MainSceneController>
     async void Start()
     {
         nowMainSceneSituation = MainSceneSituation.Initializing;
-        string errorMassage = "ÉCÉìÉXÉyÉNÉ^Å[ñ¢ãLì¸";
+        string errorMassage = "„Ç§„É≥„Çπ„Éö„ÇØ„Çø„ÉºÊú™Ë®òÂÖ•";
         if (tagOfFallingObject == "" || tagOfGameoverLine == "" || tagOfFallingObjectIgnoreGameover == "") Debug.LogError(errorMassage);
         fallingObjectController = FallingObjectController.Instance;
         uiController = UIController.Instance;
+        scoreController = ScoreController.Instance;
         await fallingObjectController.Initialization();
         uiController.Initialization();
+        scoreController.Initialization();
         nowMainSceneSituation = MainSceneSituation.Playing;
     }
 
@@ -68,8 +81,8 @@ public class MainSceneController : SingletonMonoBehaviour<MainSceneController>
         }
     }
 
-    private void DisplayUIResult()
+    private void GameoverEvent()
     {
-        uiController.DisplayUIResult();
+        uiController.GameoverEvent();
     }
 }

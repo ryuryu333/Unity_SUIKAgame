@@ -1,4 +1,4 @@
-cd ~/Documents/UnityData/スイカゲーム
+﻿cd ~/Documents/UnityData/スイカゲーム
 git branch -a
 
 git log --graph --pretty=format:"%C(red)%h %C(green)%an %Creset%s %C(yellow)%d%Creset"

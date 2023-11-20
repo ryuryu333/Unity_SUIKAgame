@@ -1,4 +1,4 @@
-using Cysharp.Threading.Tasks;
+﻿using Cysharp.Threading.Tasks;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
@@ -28,6 +28,7 @@ public class FallingObjectController : SingletonMonoBehaviour<FallingObjectContr
     private string tagOfFallingObject;
     private string tagOfFallingObjectIgnoreGameover;
     private MainSceneController mainSceneController;
+    private ScoreController scoreController;
 
     [SerializeField] private float generationIntervalTimer;
     public float GenerationIntervalValue { get => generationIntervalTime; set => generationIntervalTime = value; }
@@ -52,6 +53,7 @@ public class FallingObjectController : SingletonMonoBehaviour<FallingObjectContr
         fallingObjectParentTransform = fallingObjectParent.transform;
         generationIntervalTimer = generationIntervalTime;
         mainSceneController = MainSceneController.Instance;
+        scoreController = ScoreController.Instance;
         tagOfFallingObjectIgnoreGameover = mainSceneController.TagOfFallingObjectIgnoreGameover;
         tagOfFallingObject = mainSceneController.TagOfFallingObject;
         //Tmpオブジェクトを削除
@@ -118,6 +120,8 @@ public class FallingObjectController : SingletonMonoBehaviour<FallingObjectContr
         //コンポーネントを付けなおさないとコライダーがスプライトに沿った形に自動調整されない
         Destroy(ChangedObject.GetComponent<PolygonCollider2D>());
         ChangedObject.AddComponent<PolygonCollider2D>();
+        //オブジェクト作成時にタイプに応じたスコアを加算
+        scoreController.ScoreWhenGenerateFallingObject(changedFallingObjectStatus);
     }
 
     public void EventCollideFalilingObjects(StatusFallingObject collideObjectStatus, StatusFallingObject beCollidedObjectStatus)

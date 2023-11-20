@@ -1,4 +1,4 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 using System;
 
 public abstract class SingletonMonoBehaviour<T> : MonoBehaviour where T : MonoBehaviour
@@ -16,7 +16,7 @@ public abstract class SingletonMonoBehaviour<T> : MonoBehaviour where T : MonoBe
                 instance = (T)FindObjectOfType(t);
                 if (instance == null)
                 {
-                    Debug.LogError(t + " ‚ğƒAƒ^ƒbƒ`‚µ‚Ä‚¢‚éGameObject‚Í‚ ‚è‚Ü‚¹‚ñ");
+                    Debug.LogError(t + " ã‚’ã‚¢ã‚¿ãƒƒãƒã—ã¦ã„ã‚‹GameObjectã¯ã‚ã‚Šã¾ã›ã‚“");
                 }
             }
 
@@ -26,8 +26,8 @@ public abstract class SingletonMonoBehaviour<T> : MonoBehaviour where T : MonoBe
 
     virtual protected void Awake()
     {
-        // ‘¼‚ÌƒQ[ƒ€ƒIƒuƒWƒFƒNƒg‚ÉƒAƒ^ƒbƒ`‚³‚ê‚Ä‚¢‚é‚©’²‚×‚é
-        // ƒAƒ^ƒbƒ`‚³‚ê‚Ä‚¢‚éê‡‚Í”jŠü‚·‚éB
+        // ä»–ã®ã‚²ãƒ¼ãƒ ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã«ã‚¢ã‚¿ãƒƒãƒã•ã‚Œã¦ã„ã‚‹ã‹èª¿ã¹ã‚‹
+        // ã‚¢ã‚¿ãƒƒãƒã•ã‚Œã¦ã„ã‚‹å ´åˆã¯ç ´æ£„ã™ã‚‹ã€‚
         CheckInstance();
     }
 
