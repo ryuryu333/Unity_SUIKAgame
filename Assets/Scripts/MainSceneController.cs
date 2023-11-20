@@ -34,6 +34,7 @@ public class MainSceneController : SingletonMonoBehaviour<MainSceneController>
     {
         FallingObject,
         FallingObjectIgnoreGameover,
+        FallingObjectBeforeDrop,
         GameoverLine
     }
 
