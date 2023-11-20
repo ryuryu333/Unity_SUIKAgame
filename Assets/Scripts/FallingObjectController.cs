@@ -54,8 +54,8 @@ public class FallingObjectController : SingletonMonoBehaviour<FallingObjectContr
         generationIntervalTimer = generationIntervalTime;
         mainSceneController = MainSceneController.Instance;
         scoreController = ScoreController.Instance;
-        tagOfFallingObjectIgnoreGameover = mainSceneController.TagOfFallingObjectIgnoreGameover;
-        tagOfFallingObject = mainSceneController.TagOfFallingObject;
+        tagOfFallingObjectIgnoreGameover = GameObjectTag.FallingObjectIgnoreGameover.ToString();
+        tagOfFallingObject = GameObjectTag.FallingObject.ToString();
         //Tmpオブジェクトを削除
         Destroy(GameObject.Find("Tmp"));
     }
