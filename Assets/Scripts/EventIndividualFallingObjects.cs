@@ -7,6 +7,7 @@ public class EventIndividualFallingObjects : MonoBehaviour
     private string tagOfFallingObject;
     private string tagOfGameoverLine;
     private string tagOfFallingObjectIgnorGameover;
+    private string tagOfFallingObjectBeforeDrop;
     private MainSceneController mainSceneController;
 
     private void Start()
@@ -15,6 +16,7 @@ public class EventIndividualFallingObjects : MonoBehaviour
         tagOfFallingObject = GameObjectTag.FallingObject.ToString();
         tagOfFallingObjectIgnorGameover = GameObjectTag.FallingObjectIgnoreGameover.ToString();
         tagOfGameoverLine = GameObjectTag.GameoverLine.ToString();
+        tagOfFallingObjectBeforeDrop = GameObjectTag.FallingObjectBeforeDrop.ToString();
         statusFallingObject = gameObject.GetComponent<StatusFallingObject>();
     }
 
@@ -31,7 +33,8 @@ public class EventIndividualFallingObjects : MonoBehaviour
     private void OnTriggerStay2D(Collider2D collision)
     {
         if (mainSceneController.NowMainSceneSituation != MainSceneSituation.Playing) return;
-        if (collision.gameObject.CompareTag(tagOfGameoverLine))
+        if (this.gameObject.CompareTag(tagOfFallingObject)) return;
+        if (collision.gameObject.CompareTag(tagOfFallingObjectBeforeDrop))
         {
             FallingObjectController.Instance.EventCollideGameoverLine(statusFallingObject);
         }

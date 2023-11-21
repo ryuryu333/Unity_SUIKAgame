@@ -444,13 +444,14 @@ MonoBehaviour:
     m_SubObjectName: 
     m_SubObjectType: 
     m_EditorAssetChanged: 1
-  generationIntervalTime: 500
+  generationIntervalTime: 100
+  dropIntervalTime: 800
   ignoreGameoverJudgmentTime: 5000
   lineCanDropObject: {fileID: 705218320}
   spriteList: []
-  isHoldingFallingObject: 0
   holdingFallingObject: {fileID: 0}
   generationIntervalTimer: 0
+  dropIntervalTimer: 0
 --- !u!4 &220482617
 Transform:
   m_ObjectHideFlags: 0

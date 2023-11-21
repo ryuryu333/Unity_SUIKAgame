@@ -12,13 +12,13 @@ public class FallingObjectController : SingletonMonoBehaviour<FallingObjectContr
     [SerializeField] private List<float> objcetScaleByTypeList = new();
     [SerializeField] private List<AssetReferenceSprite> spriteRefList = new();
     [SerializeField] private float generationIntervalTime;
+    [SerializeField] private float dropIntervalTime;
     [SerializeField] private float ignoreGameoverJudgmentTime;
     [SerializeField] private GameObject lineCanDropObject;
 
     //値のキャッシュ用変数
     [Header("デバック用")]
     [SerializeField] private List<Sprite> spriteList = new();
-    [SerializeField] private bool isHoldingFallingObject;
     [SerializeField] private GameObject holdingFallingObject;
     private List<Vector3> spriteScaleList = new();
     private Transform fallingObjectParentTransform;
@@ -33,9 +33,8 @@ public class FallingObjectController : SingletonMonoBehaviour<FallingObjectContr
     private ScoreController scoreController;
     private (float minX, float maxX) rangeXPositionCanDropObject;
     private float yPositionCanDropObject;
-
     [SerializeField] private float generationIntervalTimer;
-    public float GenerationIntervalValue { get => generationIntervalTime; set => generationIntervalTime = value; }
+    [SerializeField] private float dropIntervalTimer;
 
     public async UniTask Initialization()
     {
@@ -56,6 +55,7 @@ public class FallingObjectController : SingletonMonoBehaviour<FallingObjectContr
         numberOfObjectType = objcetScaleByTypeList.Count;
         fallingObjectParentTransform = fallingObjectParent.transform;
         generationIntervalTimer = generationIntervalTime;
+        dropIntervalTimer = dropIntervalTime;
         mainSceneController = MainSceneController.Instance;
         scoreController = ScoreController.Instance;
         tagOfFallingObjectIgnoreGameover = GameObjectTag.FallingObjectIgnoreGameover.ToString();
@@ -67,7 +67,7 @@ public class FallingObjectController : SingletonMonoBehaviour<FallingObjectContr
         rangeXPositionCanDropObject = (position.x - (sizeX / 2), position.x + (sizeX / 2));
         yPositionCanDropObject = position.y;
         //メンバ変数の初期化続き
-        isHoldingFallingObject = false;
+        holdingFallingObject = null;
         //Tmpオブジェクトを削除
         Destroy(GameObject.Find("Tmp"));
     }
@@ -75,57 +75,57 @@ public class FallingObjectController : SingletonMonoBehaviour<FallingObjectContr
     //毎フレーム呼び出すのでメンバ変数として定義
     private Vector3 mousePosition;
     private Vector3 holdingObjectPosition;
+    private PolygonCollider2D holdingObjectCollider;
     public void UpdateMe()
     {
+        if (holdingFallingObject == null)
+        {
+            if (generationIntervalTimer > 0) generationIntervalTimer--;
+            if (generationIntervalTimer != 0) return;
+            holdingFallingObject = GenerateFallingObject();
+            generationIntervalTimer = generationIntervalTime;
+        }
+        //オブジェクトの当たり判定を無効状態にしておく
+        if (holdingObjectCollider == null) holdingObjectCollider = holdingFallingObject.GetComponent<PolygonCollider2D>();
+        if (holdingObjectCollider.enabled) holdingObjectCollider.enabled = false;
+        //マウスの位置を元にオブジェクトの位置を更新
         mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         mousePosition.z = 0; //z座標の取得値はカメラと同じ、カメラに映るようにz座標を変更
-        if (isHoldingFallingObject == false)
-        {
-            holdingFallingObject = GenerateFallingObject();
-            isHoldingFallingObject = true;
-        }
-        //オブジェクトの位置を更新  
-        //x座標は落下可能な範囲内に限定
-        if (mousePosition.x < rangeXPositionCanDropObject.minX) 
+        //オブジェクトのx座標が落下可能な範囲を超えない様に補正
+        if (mousePosition.x < rangeXPositionCanDropObject.minX)
             holdingObjectPosition.x = rangeXPositionCanDropObject.minX;
-        else if (mousePosition.x > rangeXPositionCanDropObject.maxX) 
+        else if (mousePosition.x > rangeXPositionCanDropObject.maxX)
             holdingObjectPosition.x = rangeXPositionCanDropObject.maxX;
-        else 
+        else
             holdingObjectPosition.x = mousePosition.x;
-        //y座標は固定
+        //オブジェクトのy座標は固定
         holdingObjectPosition.y = yPositionCanDropObject;
         holdingFallingObject.transform.position = holdingObjectPosition;
-        //クリックを検知してオブジェクトを落下させる
-        CheckPlayerInput();
-    }
-
-    private void CheckPlayerInput()
-    {
-        if (generationIntervalTimer > 0)
-        {
-            generationIntervalTimer--;
-            return;
-        }
+        //オブジェクトを落とす処理
+        if (dropIntervalTimer > 0) dropIntervalTimer--;
+        if (dropIntervalTimer != 0) return;
         if (Input.GetMouseButtonUp(0))
         {
-            generationIntervalTimer = generationIntervalTime;
-            //落下させる処理
-
+            //タグを更新、一定時間のみGameover判定を無視されるタグとする
+            //FallingObjectBeforeDrop -> FallingObjectIgnoreGameover -> FallingObject
+            _ = TemporarilyIgnoreGameover(holdingFallingObject); //awaitしないで処理を走らせておく
             //オブジェクト投下時にタイプに応じたスコアを加算
             scoreController.ScoreWhenDropFallingObject(holdingFallingObject.GetComponent<StatusFallingObject>());
-            //生成後から一定時間のみGameover判定を無視されるタグとする、awaitしないで処理を走らせておく
-            //FallingObjectBeforeDrop -> FallingObjectIgnoreGameover -> FallingObject
-            _ = TemporarilyIgnoreGameover(holdingFallingObject);
+            //ホールド対象から外し、次のオブジェクト生成のタイマーを初期化する
+            holdingObjectCollider.enabled = true;
+            holdingObjectCollider = null;
+            holdingFallingObject = null;
+            dropIntervalTimer = dropIntervalTime;
         }
     }
 
     private GameObject GenerateFallingObject()
     {
         //プレハブよりオブジェクトを複製
-        var instantiateObject = Instantiate(fallingObjectPrefab, fallingObjectParentTransform.position, Quaternion.Euler(0, 0, Random.Range(0, 360)), fallingObjectParentTransform);
+        var instantiateObject = Instantiate(fallingObjectPrefab, fallingObjectParentTransform.position, Quaternion.identity, fallingObjectParentTransform);
         //リストへ参照を保管
         fallingObjectList.Add(instantiateObject);
-        StatusFallingObject statusInstantiateObject = instantiateObject.GetComponent<StatusFallingObject>();
+        var statusInstantiateObject = instantiateObject.GetComponent<StatusFallingObject>();
         statusFallingObjectList.Add(instantiateObject.GetComponent<StatusFallingObject>());
         fallingObjectSpriteRendererList.Add(instantiateObject.GetComponent<SpriteRenderer>());
         //StatusFallingObjectに書き込み
