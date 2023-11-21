@@ -1,7 +1,5 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using UnityEngine.PlayerLoop;
+﻿using UnityEngine;
+using MainSceneEnumList;
 
 public class MainSceneController : SingletonMonoBehaviour<MainSceneController>
 {
@@ -28,23 +26,6 @@ public class MainSceneController : SingletonMonoBehaviour<MainSceneController>
             if (value == MainSceneSituation.Gameover) GameoverEvent();
             nowMainSceneSituation = value;
         }
-    }
-
-    public enum GameObjectTag
-    {
-        FallingObject,
-        FallingObjectIgnoreGameover,
-        FallingObjectBeforeDrop,
-        GameoverLine
-    }
-
-
-    public enum MainSceneSituation
-    {
-        Initializing,
-        Playing,
-        Pause,
-        Gameover
     }
 
     async void Start()

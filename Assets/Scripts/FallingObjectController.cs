@@ -1,12 +1,8 @@
 ﻿using Cysharp.Threading.Tasks;
-using System;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
-using UnityEngine.ResourceManagement.AsyncOperations;
-using static MainSceneController;
-using static UnityEngine.GraphicsBuffer;
+using MainSceneEnumList;
 
 public class FallingObjectController : SingletonMonoBehaviour<FallingObjectController>
 {

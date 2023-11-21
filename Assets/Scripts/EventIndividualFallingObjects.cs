@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Xml.Linq;
-using UnityEngine;
-using static MainSceneController;
+﻿using UnityEngine;
+using MainSceneEnumList;
 
 public class EventIndividualFallingObjects : MonoBehaviour
 {
