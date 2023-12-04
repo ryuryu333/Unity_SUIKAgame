@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 using MainSceneEnumList;
+using System.Threading;
+using Cysharp.Threading.Tasks.Triggers;
 
 public class FallingObjectController : SingletonMonoBehaviour<FallingObjectController>
 {
@@ -76,6 +78,7 @@ public class FallingObjectController : SingletonMonoBehaviour<FallingObjectContr
     private Vector3 mousePosition;
     private Vector3 holdingObjectPosition;
     private PolygonCollider2D holdingObjectCollider;
+    private Rigidbody2D holdingObjectRigitbody2D;
     public void UpdateMe()
     {
         if (holdingFallingObject == null)
@@ -88,6 +91,9 @@ public class FallingObjectController : SingletonMonoBehaviour<FallingObjectContr
         //オブジェクトの当たり判定を無効状態にしておく
         if (holdingObjectCollider == null) holdingObjectCollider = holdingFallingObject.GetComponent<PolygonCollider2D>();
         if (holdingObjectCollider.enabled) holdingObjectCollider.enabled = false;
+        //物理演算も停止しておく
+        if (holdingObjectRigitbody2D == null) holdingObjectRigitbody2D = holdingFallingObject.GetComponent<Rigidbody2D>();
+        holdingObjectRigitbody2D.isKinematic = true;
         //マウスの位置を元にオブジェクトの位置を更新
         mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         mousePosition.z = 0; //z座標の取得値はカメラと同じ、カメラに映るようにz座標を変更
@@ -115,6 +121,8 @@ public class FallingObjectController : SingletonMonoBehaviour<FallingObjectContr
             holdingObjectCollider.enabled = true;
             holdingObjectCollider = null;
             holdingFallingObject = null;
+            holdingObjectRigitbody2D.isKinematic = false;
+            holdingObjectRigitbody2D = null;
             dropIntervalTimer = dropIntervalTime;
         }
     }
