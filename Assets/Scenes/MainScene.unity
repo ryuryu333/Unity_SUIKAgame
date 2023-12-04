@@ -444,8 +444,8 @@ MonoBehaviour:
     m_SubObjectName: 
     m_SubObjectType: 
     m_EditorAssetChanged: 1
-  generationIntervalTime: 800
-  dropIntervalTime: 1000
+  generationIntervalTime: 1100
+  dropIntervalTime: 200
   ignoreGameoverJudgmentTime: 5000
   lineCanDropObject: {fileID: 705218320}
   spriteList: []

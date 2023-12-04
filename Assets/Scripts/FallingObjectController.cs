@@ -96,7 +96,6 @@ public class FallingObjectController : SingletonMonoBehaviour<FallingObjectContr
         holdingObjectRigitbody2D.isKinematic = true;
         //マウスの位置を元にオブジェクトの位置を更新
         mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        mousePosition.z = 0; //z座標の取得値はカメラと同じ、カメラに映るようにz座標を変更
         //オブジェクトのx座標が落下可能な範囲を超えない様に補正
         if (mousePosition.x < rangeXPositionCanDropObject.minX)
             holdingObjectPosition.x = rangeXPositionCanDropObject.minX;
@@ -117,11 +116,13 @@ public class FallingObjectController : SingletonMonoBehaviour<FallingObjectContr
             _ = TemporarilyIgnoreGameover(holdingFallingObject); //awaitしないで処理を走らせておく
             //オブジェクト投下時にタイプに応じたスコアを加算
             scoreController.ScoreWhenDropFallingObject(holdingFallingObject.GetComponent<StatusFallingObject>());
-            //ホールド対象から外し、次のオブジェクト生成のタイマーを初期化する
+            //当たり判定と物理演算を有効化
             holdingObjectCollider.enabled = true;
-            holdingObjectCollider = null;
-            holdingFallingObject = null;
             holdingObjectRigitbody2D.isKinematic = false;
+            //次のフレームからはマウスの位置に位置は更新されず、重力により落下する
+            holdingFallingObject = null;
+            //初期化
+            holdingObjectCollider = null;
             holdingObjectRigitbody2D = null;
             dropIntervalTimer = dropIntervalTime;
         }
