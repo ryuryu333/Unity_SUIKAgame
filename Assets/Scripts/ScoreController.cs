@@ -16,7 +16,7 @@ public class ScoreController : SingletonMonoBehaviour<ScoreController>
         mainSceneController = MainSceneController.Instance;
     }
 
-    public void ScoreWhenGenerateFallingObject(StatusFallingObject generatedObjectStatus)
+    public void ScoreWhenDropFallingObject(StatusFallingObject generatedObjectStatus)
     {
         int addScore = scoreByTypeList[generatedObjectStatus.TypeFallingObject];
         mainSceneController.Score += addScore;

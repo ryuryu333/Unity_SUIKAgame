@@ -1,20 +1,8 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using UnityEngine.PlayerLoop;
+﻿using UnityEngine;
+using MainSceneEnumList;
 
 public class MainSceneController : SingletonMonoBehaviour<MainSceneController>
 {
-    [Header("インスペクタで値を指定")]
-    [SerializeField] private string tagOfFallingObject;
-    public string TagOfFallingObject { get => tagOfFallingObject; set => tagOfFallingObject = value; }
-
-    [SerializeField] private string tagOfGameoverLine;
-    public string TagOfGameoverLine { get => tagOfGameoverLine; set => tagOfGameoverLine = value; }
-
-    [SerializeField] private string tagOfFallingObjectIgnoreGameover;
-    public string TagOfFallingObjectIgnoreGameover { get => tagOfFallingObjectIgnoreGameover; set => tagOfFallingObjectIgnoreGameover = value; }
-
     [Header("デバック用")]
     private FallingObjectController fallingObjectController;
     private UIController uiController;
@@ -37,23 +25,12 @@ public class MainSceneController : SingletonMonoBehaviour<MainSceneController>
         {
             if (value == MainSceneSituation.Gameover) GameoverEvent();
             nowMainSceneSituation = value;
-        }         
-    }
-
-
-    public enum MainSceneSituation
-    {
-        Initializing,
-        Playing,
-        Pause,
-        Gameover
+        }
     }
 
     async void Start()
     {
         nowMainSceneSituation = MainSceneSituation.Initializing;
-        string errorMassage = "インスペクター未記入";
-        if (tagOfFallingObject == "" || tagOfGameoverLine == "" || tagOfFallingObjectIgnoreGameover == "") Debug.LogError(errorMassage);
         fallingObjectController = FallingObjectController.Instance;
         uiController = UIController.Instance;
         scoreController = ScoreController.Instance;

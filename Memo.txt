@@ -29,5 +29,6 @@ title
 
 detail
 
-次はGameover処理自体
+next
+オブジェクトの落下速度直し
 
